@@ -1,7 +1,17 @@
+import { Suspense } from "react";
+import Navbar from "@/components/protected/navbar";
+
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  return (
+    <>
+      <Suspense>
+        <Navbar />
+      </Suspense>
+      {children}
+    </>
+  );
 }
