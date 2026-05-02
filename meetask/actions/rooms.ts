@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 interface FormData {
     name: string;
@@ -24,6 +25,43 @@ export async function createRoom(formData: FormData) {
     if (error) {
         return {error: error.message};
     }
+    revalidatePath("/dashboard");
 
     return {data};
+}
+
+export async function getRooms() {
+    const supabase = await createClient();
+
+    const {data: {user}} = await supabase.auth.getUser();
+    if (!user) {
+        return {error: "Unauthorized"};
+    }
+
+    const {data, error} = await supabase.from("rooms").select("*").eq("owner_id", user.id);
+
+    if (error) {
+        return {error: error.message};
+    }
+
+    return {data};
+}
+
+export async function deleteRoom(id: string) {
+    const supabase = await createClient();
+    const {data: {user}} = await supabase.auth.getUser();
+
+    if (!user) {
+        return {error: "Unauthorized"};
+    };
+
+    const {error} = await supabase.from("rooms").delete().eq("id", id).eq("owner_id", user.id);
+
+    if (error) {
+        return {error: error.message};
+    }
+
+    revalidatePath("/dashboard");
+
+    return {data: {success: "Room deleted successfully"}};
 }

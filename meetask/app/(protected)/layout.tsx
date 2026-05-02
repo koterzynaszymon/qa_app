@@ -8,9 +8,7 @@ export default function ProtectedLayout({
 }) {
   return (
     <>
-      <Suspense>
-        <Navbar />
-      </Suspense>
+      <Navbar />
       {children}
     </>
   );
