@@ -1,5 +1,4 @@
 import Navbar from "@/components/protected/navbar";
-import RoomSidebar from "@/components/room/sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
 
