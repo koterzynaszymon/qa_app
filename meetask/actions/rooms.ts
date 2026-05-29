@@ -65,3 +65,14 @@ export async function deleteRoom(id: string) {
 
     return {data: {success: "Room deleted successfully"}};
 }
+
+export async function getRoomOwnerId(roomId: string){
+    const supabase = await createClient();
+    const {data, error} = await supabase.from("rooms").select("owner_id").eq("id", roomId).single();
+
+    if (error){
+        return {error: error.message};
+    }
+
+    return {data};
+}
