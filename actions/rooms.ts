@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { checkIfOwner } from "./users";
 
 interface FormData {
     name: string;
@@ -64,6 +65,36 @@ export async function deleteRoom(id: string) {
     revalidatePath("/dashboard");
 
     return {data: {success: "Room deleted successfully"}};
+}
+
+export async function updateRoom(id: string, formData: FormData) {
+    const { name, description } = formData;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !(await checkIfOwner(id)).data) {
+        return { error: "Unauthorized" };
+    }
+
+    const { data, error } = await supabase
+        .from("rooms")
+        .update({
+            name,
+            description,
+        })
+        .eq("id", id)
+        .eq("owner_id", user.id)
+        .select()
+        .single();
+
+    if (error) {
+        return { error: error.message };
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath(`/room/${id}`);
+
+    return { data };
 }
 
 export async function getRoomOwnerId(roomId: string){
