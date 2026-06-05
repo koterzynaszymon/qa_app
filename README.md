@@ -128,6 +128,10 @@ Core tables:
 3. Point `NEXT_PUBLIC_APP_URL` to your production URL
 4. Run `supabase db push` against your production Supabase project
 
+## To Do
+1. Implement some sort of stats on the dashboard, how many questions were asked in the last 7 days or so.
+2. Panel to see moderators for each room and to delete them from room.
+
 ## License
 
 Private project.
