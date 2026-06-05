@@ -1,9 +1,5 @@
-import { Loader2Icon } from "lucide-react";
+import { PageLoader } from "@/components/ui/page-loader";
 
 export default function Loading() {
-  return (
-    <div className="flex items-center justify-center p-12">
-      <Loader2Icon className="h-8 w-8 animate-spin text-muted-foreground" />
-    </div>
-  );
+  return <PageLoader />;
 }

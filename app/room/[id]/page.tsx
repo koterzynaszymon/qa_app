@@ -1,13 +1,33 @@
 import { getQuestions } from "@/actions/questions";
 import { getRoomModeratorIds } from "@/actions/roomModerators";
 import { getRoomIsOpen, getRoomOwnerId } from "@/actions/rooms";
-import Loading from "@/app/(protected)/dashboard/loading";
 import CreateQuestionDialog from "@/components/room/create-question-dialog";
 import ShareThroughQrcodeDialog from "@/components/room/share-through-qrcode-dialog";
 import RoomSidebar from "@/components/room/sidebar";
+import { QuestionsListSkeleton } from "@/components/room/room-page-skeleton";
 import QuestionCard from "@/components/room/ui/question-card";
 import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
+
+async function RoomActions({ roomId }: { roomId: string }) {
+  const { data: isRoomOpen } = await getRoomIsOpen(roomId);
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      <CreateQuestionDialog roomId={roomId} isRoomOpen={isRoomOpen ?? true} />
+      <ShareThroughQrcodeDialog roomId={roomId} />
+    </div>
+  );
+}
+
+function RoomActionsSkeleton() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <div className="h-9 w-32 animate-pulse rounded-md bg-muted" />
+      <div className="h-9 w-28 animate-pulse rounded-md bg-muted" />
+    </div>
+  );
+}
 
 async function QuestionsList({
   id,
@@ -64,7 +84,6 @@ export default async function RoomPage({
 }) {
   const { id } = await params;
   const { filter } = await searchParams;
-  const { data: isRoomOpen } = await getRoomIsOpen(id);
 
   return (
     <div className="flex flex-col md:flex-row w-full flex-1">
@@ -72,12 +91,11 @@ export default async function RoomPage({
       <div className="flex-1 p-4 min-w-0">
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
           <h1 className="text-2xl font-bold">Questions</h1>
-          <div className="flex flex-wrap gap-2">
-            <CreateQuestionDialog roomId={id} isRoomOpen={isRoomOpen ?? true} />
-            <ShareThroughQrcodeDialog roomId={id} />
-          </div>
+          <Suspense fallback={<RoomActionsSkeleton />}>
+            <RoomActions roomId={id} />
+          </Suspense>
         </div>
-        <Suspense key={filter} fallback={<Loading />}>
+        <Suspense key={filter} fallback={<QuestionsListSkeleton />}>
           <QuestionsList id={id} filter={filter} />
         </Suspense>
       </div>

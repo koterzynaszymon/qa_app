@@ -1,4 +1,5 @@
 import Navbar from "@/components/protected/navbar";
+import NavbarSkeleton from "@/components/protected/navbar-skeleton";
 import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
 
@@ -19,7 +20,7 @@ export default function RoomLayout({
 }) {
   return (
     <>
-      <Suspense fallback={null}>
+      <Suspense fallback={<NavbarSkeleton />}>
         <ConditionalNavbar />
       </Suspense>
       <div className="flex flex-row w-full flex-1">
