@@ -22,10 +22,12 @@ interface RoomCardProps {
     name: string;
     description: string;
     is_open?: boolean;
+    is_owner?: boolean;
   };
 }
 
 export default function RoomCard({ room }: RoomCardProps) {
+  const isOwner = room.is_owner ?? true;
   const [isOpen, setIsOpen] = useState(room.is_open ?? true);
   const [isToggling, setIsToggling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -68,25 +70,27 @@ export default function RoomCard({ room }: RoomCardProps) {
   return (
     <Link href={`/room/${room.id}`} className="block hover:opacity-80 transition-opacity">
       <Card
-        className={`w-full h-56 flex flex-col ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
+        className={`w-full ${isOwner ? "h-56" : "h-40"} flex flex-col ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
       >
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="leading-snug">{room.name}</CardTitle>
-            <label
-              className="group flex items-center gap-2 text-sm text-muted-foreground shrink-0 cursor-pointer rounded-md px-2 py-1 transition-colors hover:text-foreground"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                checked={isOpen}
-                disabled={isToggling || isDeleting}
-                onChange={handleToggleOpen}
+            {isOwner && (
+              <label
+                className="group flex items-center gap-2 text-sm text-muted-foreground shrink-0 cursor-pointer rounded-md px-2 py-1 transition-colors hover:text-foreground"
                 onClick={(e) => e.stopPropagation()}
-                className="h-4 w-4 rounded border border-input accent-primary cursor-pointer transition-all hover:brightness-125"
-              />
-              Open
-            </label>
+              >
+                <input
+                  type="checkbox"
+                  checked={isOpen}
+                  disabled={isToggling || isDeleting}
+                  onChange={handleToggleOpen}
+                  onClick={(e) => e.stopPropagation()}
+                  className="h-4 w-4 rounded border border-input accent-primary cursor-pointer transition-all hover:brightness-125"
+                />
+                Open
+              </label>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -94,26 +98,28 @@ export default function RoomCard({ room }: RoomCardProps) {
             {room.description}
           </p>
         </CardContent>
-        <CardFooter className="gap-6 mt-auto">
-          <div
-            className="w-full"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <EditRoomDialog room={room} />
-          </div>
-          <Button
-            variant="destructive"
-            size="sm"
-            className="w-full"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            <TrashIcon /> Delete
-          </Button>
-        </CardFooter>
+        {isOwner && (
+          <CardFooter className="gap-6 mt-auto">
+            <div
+              className="w-full"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <EditRoomDialog room={room} />
+            </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="w-full"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              <TrashIcon /> Delete
+            </Button>
+          </CardFooter>
+        )}
       </Card>
     </Link>
   );

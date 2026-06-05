@@ -39,11 +39,46 @@ export async function getRooms() {
         return {error: "Unauthorized"};
     }
 
-    const {data, error} = await supabase.from("rooms").select("*").eq("owner_id", user.id);
+    const {data: ownedRooms, error: ownedError} = await supabase
+        .from("rooms")
+        .select("*")
+        .eq("owner_id", user.id);
 
-    if (error) {
-        return {error: error.message};
+    if (ownedError) {
+        return {error: ownedError.message};
     }
+
+    const {data: moderatorEntries, error: moderatorError} = await supabase
+        .from("room_moderators")
+        .select("room_id")
+        .eq("user_id", user.id);
+
+    if (moderatorError) {
+        return {error: moderatorError.message};
+    }
+
+    const moderatedRoomIds = (moderatorEntries ?? [])
+        .map((entry) => entry.room_id)
+        .filter((roomId) => !ownedRooms?.some((room) => room.id === roomId));
+
+    let moderatedRooms: typeof ownedRooms = [];
+    if (moderatedRoomIds.length > 0) {
+        const {data, error} = await supabase
+            .from("rooms")
+            .select("*")
+            .in("id", moderatedRoomIds);
+
+        if (error) {
+            return {error: error.message};
+        }
+
+        moderatedRooms = data ?? [];
+    }
+
+    const data = [
+        ...(ownedRooms ?? []).map((room) => ({...room, is_owner: true})),
+        ...moderatedRooms.map((room) => ({...room, is_owner: false})),
+    ];
 
     return {data};
 }
