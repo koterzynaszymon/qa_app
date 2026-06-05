@@ -1,0 +1,1 @@
+alter table rooms add column is_open boolean not null default true; 

@@ -66,7 +66,7 @@ export default function AddModeratorDialog({ roomId }: { roomId: string }) {
     {isOwner ? (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="w-full">
           <PlusIcon className="w-4 h-4" /> Add Moderator
         </Button>
       </DialogTrigger>

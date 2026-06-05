@@ -10,8 +10,9 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "MeetAsk",
-  description: "MeetAsk application",
+  title: "MeetAsk — Live Q&A for events",
+  description:
+    "Create Q&A rooms for your events. Share a link or QR code with your audience and answer questions in real time.",
 };
 
 const geistSans = Geist({

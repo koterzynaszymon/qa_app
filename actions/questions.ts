@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getRoomIsOpen } from "@/actions/rooms";
 import { revalidatePath } from "next/cache";
 
 interface CreateQuestionData {
@@ -11,6 +12,16 @@ interface CreateQuestionData {
 export async function createQuestion({ roomId, content }: CreateQuestionData) {
   if (!content.trim()) {
     return { error: "Question cannot be empty" };
+  }
+
+  const { data: isOpen, error: roomError } = await getRoomIsOpen(roomId);
+
+  if (roomError) {
+    return { error: roomError };
+  }
+
+  if (!isOpen) {
+    return { error: "This room is closed. New questions are not accepted." };
   }
 
   const supabase = await createClient();

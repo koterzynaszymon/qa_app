@@ -17,7 +17,13 @@ import { useState } from "react";
 import { createQuestion } from "@/actions/questions";
 import { toast } from "sonner";
 
-export default function CreateQuestionButton({ roomId }: { roomId: string }) {
+export default function CreateQuestionButton({
+  roomId,
+  isRoomOpen = true,
+}: {
+  roomId: string;
+  isRoomOpen?: boolean;
+}) {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +50,14 @@ export default function CreateQuestionButton({ roomId }: { roomId: string }) {
       setContent("");
     }
   };
+
+  if (!isRoomOpen) {
+    return (
+      <Button variant="outline" disabled>
+        <PlusIcon className="w-4 h-4" /> Room closed
+      </Button>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

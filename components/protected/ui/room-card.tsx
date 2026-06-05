@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/card";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { deleteRoom } from "@/actions/rooms";
+import { deleteRoom, toggleRoomOpen } from "@/actions/rooms";
 import { toast } from "sonner";
 import Link from "next/link";
-import type { MouseEvent } from "react";
+import type { ChangeEvent, MouseEvent } from "react";
 import EditRoomDialog from "../edit-room-dialog";
 
 interface RoomCardProps {
@@ -21,11 +21,32 @@ interface RoomCardProps {
     id: string;
     name: string;
     description: string;
+    is_open?: boolean;
   };
 }
 
 export default function RoomCard({ room }: RoomCardProps) {
+  const [isOpen, setIsOpen] = useState(room.is_open ?? true);
+  const [isToggling, setIsToggling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleToggleOpen = async (e: ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+
+    const newValue = e.target.checked;
+    setIsOpen(newValue);
+    setIsToggling(true);
+
+    const result = await toggleRoomOpen(room.id, newValue);
+    if (result.error) {
+      setIsOpen(!newValue);
+      toast.error(result.error);
+    } else {
+      toast.success(newValue ? "Room opened" : "Room closed");
+    }
+
+    setIsToggling(false);
+  };
   const handleDelete = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -49,8 +70,24 @@ export default function RoomCard({ room }: RoomCardProps) {
       <Card
         className={`w-full h-56 flex flex-col ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
       >
-        <CardHeader className="pb-3 flex">
-          <CardTitle className="leading-snug">{room.name}</CardTitle>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-2">
+            <CardTitle className="leading-snug">{room.name}</CardTitle>
+            <label
+              className="group flex items-center gap-2 text-sm text-muted-foreground shrink-0 cursor-pointer rounded-md px-2 py-1 transition-colors hover:text-foreground"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="checkbox"
+                checked={isOpen}
+                disabled={isToggling || isDeleting}
+                onChange={handleToggleOpen}
+                onClick={(e) => e.stopPropagation()}
+                className="h-4 w-4 rounded border border-input accent-primary cursor-pointer transition-all hover:brightness-125"
+              />
+              Open
+            </label>
+          </div>
         </CardHeader>
         <CardContent>
           <p className="text-md text-muted-foreground line-clamp-2 md:line-clamp-3">

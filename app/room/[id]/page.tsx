@@ -1,6 +1,6 @@
 import { getQuestions } from "@/actions/questions";
 import { getRoomModeratorIds } from "@/actions/roomModerators";
-import { getRoomOwnerId } from "@/actions/rooms";
+import { getRoomIsOpen, getRoomOwnerId } from "@/actions/rooms";
 import Loading from "@/app/(protected)/dashboard/loading";
 import CreateQuestionDialog from "@/components/room/create-question-dialog";
 import ShareThroughQrcodeDialog from "@/components/room/share-through-qrcode-dialog";
@@ -64,15 +64,16 @@ export default async function RoomPage({
 }) {
   const { id } = await params;
   const { filter } = await searchParams;
+  const { data: isRoomOpen } = await getRoomIsOpen(id);
 
   return (
-    <div className="flex flex-row w-full flex-1">
+    <div className="flex flex-col md:flex-row w-full flex-1">
       <RoomSidebar roomId={id} filter={filter} />
-      <div className="flex-1 p-4">
-        <div className="flex justify-between items-center mb-6">
+      <div className="flex-1 p-4 min-w-0">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
           <h1 className="text-2xl font-bold">Questions</h1>
-          <div className="flex gap-2">
-            <CreateQuestionDialog roomId={id} />
+          <div className="flex flex-wrap gap-2">
+            <CreateQuestionDialog roomId={id} isRoomOpen={isRoomOpen ?? true} />
             <ShareThroughQrcodeDialog roomId={id} />
           </div>
         </div>

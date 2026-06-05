@@ -4,23 +4,25 @@ import AddModeratorDialog from "./add-moderator-dialog";
 
 export default function RoomSidebar({ roomId, filter }: { roomId: string, filter: "all" | "answered" | "unanswered" }) {
     return (
-      <div className="w-64 min-h-full text-white border-r">
-        <div className="flex flex-col gap-4 p-4">
-          <Link href={`/room/${roomId}?filter=all`}>
+      <div className="w-full md:w-64 md:min-h-full border-b md:border-b-0 md:border-r shrink-0">
+        <div className="flex flex-row md:flex-col gap-2 md:gap-4 p-4">
+          <Link href={`/room/${roomId}?filter=all`} className="flex-1 md:flex-none">
             <Button variant={filter === "all" || !filter ? "secondary" : "outline" } className="w-full">
-              <h3>All</h3>
+              All
             </Button>
           </Link>
-          <Link href={`/room/${roomId}?filter=answered`}>
+          <Link href={`/room/${roomId}?filter=answered`} className="flex-1 md:flex-none">
             <Button variant={filter === "answered" ? "secondary" : "outline"} className="w-full">
-              <h3>Answered</h3>
+              Answered
             </Button>
           </Link>
-          <Link href={`/room/${roomId}?filter=unanswered`}>
+          <Link href={`/room/${roomId}?filter=unanswered`} className="flex-1 md:flex-none">
             <Button variant={filter === "unanswered" ? "secondary" : "outline"} className="w-full">
-              <h3>Unanswered</h3>
+              Unanswered
             </Button>
           </Link>
+        </div>
+        <div className="px-4 pb-4">
           <AddModeratorDialog roomId={roomId} />
         </div>
       </div>
