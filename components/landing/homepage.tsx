@@ -196,7 +196,7 @@ export default function Homepage() {
       <footer className="border-t py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} MeetAsk
+            © 2026 MeetAsk
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link href="/login" className="hover:text-foreground transition-colors">
