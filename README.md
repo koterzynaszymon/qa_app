@@ -1,6 +1,7 @@
 # MeetAsk
 
 Live Q&A platform for events, workshops, and meetings. Organizers create rooms, share them via link or QR code, and answer audience questions in real time.
+App is hosted on: https://qa-app-szymon-koterzyna.vercel.app/
 
 ## Features
 
