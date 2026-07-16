@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "../ui/button"
 import AddModeratorDialog from "./add-moderator-dialog";
+import ManageModeratorsDialog from "./manage-moderators-dialog";
 
 export default function RoomSidebar({ roomId, filter }: { roomId: string, filter: "all" | "answered" | "unanswered" }) {
     return (
@@ -22,8 +23,9 @@ export default function RoomSidebar({ roomId, filter }: { roomId: string, filter
             </Button>
           </Link>
         </div>
-        <div className="px-4 pb-4">
+        <div className="flex flex-col gap-2 px-4 pb-4">
           <AddModeratorDialog roomId={roomId} />
+          <ManageModeratorsDialog roomId={roomId} />
         </div>
       </div>
     );

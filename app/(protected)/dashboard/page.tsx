@@ -1,6 +1,8 @@
 import { getRooms } from "@/actions/rooms";
 import RoomCard from "@/components/protected/ui/room-card";
+import WeeklyStatsCard from "@/components/protected/ui/weekly-stats-card";
 import { createClient } from "@/lib/supabase/server";
+import { Suspense } from "react";
 
 export default async function DashboardPage() {
 
@@ -31,6 +33,15 @@ export default async function DashboardPage() {
         {rooms.data?.map((room) => {
           return <RoomCard key={room.id} room={room} />;
         })}
+      </div>
+      <div className="mt-6">
+        <Suspense
+          fallback={
+            <div className="h-24 w-full max-w-xs animate-pulse rounded-xl border bg-muted/30" />
+          }
+        >
+          <WeeklyStatsCard />
+        </Suspense>
       </div>
     </div>
   );  
