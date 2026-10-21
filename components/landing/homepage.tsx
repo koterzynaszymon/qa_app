@@ -1,213 +1,212 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  MessageCircleQuestion,
-  QrCode,
-  Users,
-  Filter,
-  Shield,
-  Zap,
-} from "lucide-react";
+import { Wordmark } from "@/components/wordmark";
 
-const steps = [
+const demoQuestions = [
   {
-    step: "1",
-    title: "Create a room",
-    description:
-      "Sign up, give your event a name, and set up a dedicated Q&A space in seconds.",
+    number: 12,
+    content: "Do you vacuum manually or trust autovacuum on tables that big?",
+    answer: "Autovacuum, with the scale factor turned way down on the hot tables.",
+    time: "4m ago",
   },
   {
-    step: "2",
-    title: "Share with your audience",
-    description:
-      "Send a link or show a QR code. Participants can join and ask questions without creating an account.",
+    number: 13,
+    content: "If you could only add one index on Monday, which would it be?",
+    answer: null,
+    time: "2m ago",
   },
   {
-    step: "3",
-    title: "Answer live",
-    description:
-      "You and your moderators review incoming questions, respond on the spot, and keep the conversation moving.",
+    number: 14,
+    content: "Will the slides be shared after the talk?",
+    answer: null,
+    time: "just now",
   },
 ];
 
-const features = [
+const timeline = [
   {
-    icon: MessageCircleQuestion,
-    title: "Open Q&A for everyone",
-    description:
-      "Audience members submit questions from any device. No app install, no sign-up friction.",
+    when: "Before",
+    title: "Set up a room",
+    body: "Name it after your talk or meeting. Add a co-host as moderator so you are not answering alone.",
   },
   {
-    icon: QrCode,
-    title: "Instant sharing",
-    description:
-      "Generate a QR code or copy a room link. Perfect for conferences, meetups, classrooms, and town halls.",
+    when: "During",
+    title: "Put the code on screen",
+    body: "People scan it, type a question and hit send. Questions land in your list in the order they were asked.",
   },
   {
-    icon: Users,
-    title: "Team moderation",
-    description:
-      "Add moderators to help you answer questions and manage the room during busy sessions.",
-  },
-  {
-    icon: Filter,
-    title: "Stay organized",
-    description:
-      "Filter between all, answered, and unanswered questions so nothing slips through.",
-  },
-  {
-    icon: Shield,
-    title: "You stay in control",
-    description:
-      "Room owners decide who moderates. Delete off-topic questions and keep discussions on track.",
-  },
-  {
-    icon: Zap,
-    title: "Built for live events",
-    description:
-      "A simple, focused interface designed for real-time Q&A — not another cluttered chat tool.",
+    when: "After",
+    title: "Close the room",
+    body: "New questions stop. Everything that was asked and answered stays readable at the same link.",
   },
 ];
 
 export default function Homepage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
+    <div className="flex min-h-screen flex-col">
+      <header className="border-b bg-background/85 backdrop-blur-sm sticky top-0 z-50">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="text-2xl font-bold tracking-tight">
-            MeetAsk
-          </Link>
-          <nav className="flex items-center gap-2 sm:gap-4">
+          <Wordmark />
+          <nav className="flex items-center gap-1 sm:gap-2">
             <Button variant="ghost" asChild>
               <Link href="/login">Log in</Link>
             </Button>
             <Button asChild>
-              <Link href="/sign-up">Get started</Link>
+              <Link href="/sign-up">Create a room</Link>
             </Button>
           </nav>
         </div>
       </header>
 
       <main className="flex-1">
-        <section className="relative overflow-hidden border-b">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
-          <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:py-32">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="mb-4 text-sm font-medium uppercase tracking-wider text-muted-foreground">
-                Live Q&A for events
-              </p>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Collect questions from your audience. Answer them in real time.
-              </h1>
-              <p className="mt-6 text-lg text-muted-foreground sm:text-xl">
-                MeetAsk helps organizers run smooth Q&A sessions at conferences,
-                workshops, and team meetings. Create a room, share a link, and
-                let your audience ask — no account required for participants.
-              </p>
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Button size="lg" asChild>
-                  <Link href="/sign-up">Create your first room</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/login">I already have an account</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              How it works
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Three steps from setup to live Q&A.
+        <section className="mx-auto grid max-w-6xl gap-14 px-4 pb-20 pt-14 sm:px-6 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:pb-28">
+          <div>
+            <h1 className="max-w-[12ch] text-[clamp(2.75rem,7vw,5.25rem)] font-extrabold leading-[0.95] tracking-[-0.045em]">
+              The back row has questions too.
+            </h1>
+            <p className="mt-7 max-w-[46ch] text-lg leading-relaxed text-muted-foreground">
+              MeetAsk gives your audience a link and a QR code. They send
+              questions from their phones, without an account. You answer them
+              live, in the order they came in.
             </p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-3">
-            {steps.map((item) => (
-              <div key={item.step} className="relative text-center md:text-left">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border bg-muted text-sm font-bold">
-                  {item.step}
-                </div>
-                <h3 className="text-xl font-semibold">{item.title}</h3>
-                <p className="mt-2 text-muted-foreground">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-y bg-muted/30">
-          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-            <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                Everything you need for live Q&A
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                Simple tools for organizers. Zero friction for your audience.
-              </p>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature) => (
-                <Card key={feature.title} className="border-muted-foreground/10">
-                  <CardHeader>
-                    <feature.icon className="mb-2 h-8 w-8 text-primary" />
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-base">
-                      {feature.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <Card className="border-muted-foreground/10 bg-muted/20">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl sm:text-3xl">
-                Ready to run your next Q&A session?
-              </CardTitle>
-              <CardDescription className="text-base">
-                Create a free account, set up your room, and share it with your
-                audience in under a minute.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center pb-8">
-              <Button size="lg" asChild>
-                <Link href="/sign-up">Get started for free</Link>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Button size="lg" asChild className="h-12 px-6 text-base">
+                <Link href="/sign-up">Create a free room</Link>
               </Button>
-            </CardContent>
-          </Card>
+              <Button size="lg" variant="ghost" asChild className="h-12 px-4 text-base">
+                <Link href="/login">Log in</Link>
+              </Button>
+            </div>
+          </div>
+
+          <DemoRoom />
+        </section>
+
+        <section className="border-y bg-card">
+          <div className="mx-auto grid max-w-6xl md:grid-cols-2">
+            <div className="border-b px-4 py-14 sm:px-6 md:border-b-0 md:border-r md:py-20 md:pr-12">
+              <h2 className="text-[1.75rem] font-bold leading-tight tracking-[-0.03em]">
+                On stage
+              </h2>
+              <ul className="mt-6 space-y-4 text-muted-foreground">
+                <Point>See every question numbered, so you can say &ldquo;question seven&rdquo; and everyone knows which one.</Point>
+                <Point>Switch between what&rsquo;s still waiting and what you&rsquo;ve already covered.</Point>
+                <Point>Write a short answer for the people who arrive late or watch the recording.</Point>
+                <Point>Bring in moderators by email to sort and answer with you.</Point>
+              </ul>
+            </div>
+            <div className="px-4 py-14 sm:px-6 md:py-20 md:pl-12">
+              <h2 className="text-[1.75rem] font-bold leading-tight tracking-[-0.03em]">
+                In the seats
+              </h2>
+              <ul className="mt-6 space-y-4 text-muted-foreground">
+                <Point>Scan the code, type, send. No app, no sign-up, no name required.</Point>
+                <Point>Ask the question you wouldn&rsquo;t ask into a microphone.</Point>
+                <Point>Watch answers appear on the same page as they&rsquo;re written.</Point>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-24">
+          <h2 className="max-w-[20ch] text-[clamp(1.75rem,3.5vw,2.5rem)] font-bold leading-[1.05] tracking-[-0.035em]">
+            One room per session, from the first slide to the last question.
+          </h2>
+          <ol className="mt-12 grid gap-px overflow-hidden rounded-md border bg-border md:grid-cols-3">
+            {timeline.map((item) => (
+              <li key={item.when} className="bg-background p-6 md:p-8">
+                <p className="text-sm font-semibold text-primary">{item.when}</p>
+                <h3 className="mt-3 text-xl font-semibold tracking-tight">
+                  {item.title}
+                </h3>
+                <p className="mt-2 leading-relaxed text-muted-foreground">
+                  {item.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="bg-foreground text-background">
+          <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-16 sm:px-6 md:flex-row md:items-center md:justify-between">
+            <p className="max-w-[28ch] text-[clamp(1.5rem,3vw,2rem)] font-bold leading-tight tracking-[-0.03em]">
+              Your next session starts with an empty card.
+            </p>
+            <Button
+              size="lg"
+              asChild
+              className="h-12 bg-background px-6 text-base text-foreground hover:bg-background/90"
+            >
+              <Link href="/sign-up">Create a free room</Link>
+            </Button>
+          </div>
         </section>
       </main>
 
-      <footer className="border-t py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
-          <p className="text-sm text-muted-foreground">
-            © 2026 MeetAsk
-          </p>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link href="/login" className="hover:text-foreground transition-colors">
+      <footer className="border-t">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p>© 2026 MeetAsk</p>
+          <div className="flex gap-6">
+            <Link href="/login" className="hover:text-foreground">
               Log in
             </Link>
-            <Link href="/sign-up" className="hover:text-foreground transition-colors">
+            <Link href="/sign-up" className="hover:text-foreground">
               Sign up
             </Link>
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function Point({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="flex gap-3 leading-relaxed">
+      <span aria-hidden="true" className="mt-[0.7em] h-px w-3 shrink-0 bg-margin" />
+      <span>{children}</span>
+    </li>
+  );
+}
+
+function DemoRoom() {
+  return (
+    <div
+      className="relative mx-auto w-full max-w-[34rem]"
+      aria-label="Example of a MeetAsk room during a talk"
+      role="img"
+    >
+      <div className="mb-4 flex items-baseline justify-between gap-4 px-1">
+        
+        <p className="flex shrink-0 items-center gap-2 text-sm text-muted-foreground">
+          <span className="live-dot h-2 w-2 rounded-full bg-margin" />
+          Live
+        </p>
+      </div>
+      <div className="flex flex-col gap-3">
+        {demoQuestions.map((question, index) => (
+          <div
+            key={question.number}
+            className="qcard deal shadow-[0_1px_0_hsl(var(--rule)),0_14px_30px_-22px_hsl(231_51%_12%/0.5)]"
+            style={{ animationDelay: `${200 + index * 380}ms` }}
+          >
+            <div className="qcard-num">Q{question.number}</div>
+            <div className="qcard-body">
+              <p className="text-[1.0625rem] font-medium leading-snug">
+                {question.content}
+              </p>
+              {question.answer ? (
+                <p className="mt-3 border-l-2 border-primary pl-3 text-sm leading-relaxed text-muted-foreground">
+                  {question.answer}
+                </p>
+              ) : null}
+              <p className="mt-3 text-xs text-muted-foreground">
+                {question.answer ? `Answered, asked ${question.time}` : question.time}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
