@@ -1,17 +1,16 @@
 import { LogoutButton } from "@/components/logout-button";
+import { Wordmark } from "@/components/wordmark";
 import CreateRoomButton from "./create-room-dialog";
-import Link from "next/link";
 
 export default async function Navbar() {
-
   return (
-    <nav className="flex justify-between items-center p-4 bg-black/50 backdrop-blur-sm border-b">
-      <h3 className="text-3xl font-bold">
-        <Link href="/dashboard">Meetask</Link>
-      </h3>
-      <div className="flex items-center gap-4">
-        <CreateRoomButton/>
-        <LogoutButton />
+    <nav className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-sm">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
+        <Wordmark href="/dashboard" />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <CreateRoomButton />
+          <LogoutButton />
+        </div>
       </div>
     </nav>
   );

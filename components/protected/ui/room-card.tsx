@@ -1,19 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { deleteRoom, toggleRoomOpen } from "@/actions/rooms";
 import { toast } from "sonner";
 import Link from "next/link";
-import type { ChangeEvent, MouseEvent } from "react";
 import EditRoomDialog from "../edit-room-dialog";
 
 interface RoomCardProps {
@@ -32,10 +25,7 @@ export default function RoomCard({ room }: RoomCardProps) {
   const [isToggling, setIsToggling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleToggleOpen = async (e: ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-
-    const newValue = e.target.checked;
+  const handleToggleOpen = async (newValue: boolean) => {
     setIsOpen(newValue);
     setIsToggling(true);
 
@@ -49,11 +39,9 @@ export default function RoomCard({ room }: RoomCardProps) {
 
     setIsToggling(false);
   };
-  const handleDelete = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
 
-    if (!confirm("Are you sure you want to delete this room?")) {
+  const handleDelete = async () => {
+    if (!confirm(`Delete "${room.name}" and all of its questions?`)) {
       return;
     }
 
@@ -63,64 +51,58 @@ export default function RoomCard({ room }: RoomCardProps) {
       toast.error(result.error);
       setIsDeleting(false);
     } else {
-      toast.success("Room deleted successfully");
+      toast.success("Room deleted");
     }
   };
 
   return (
-    <Link href={`/room/${room.id}`} className="block hover:opacity-80 transition-opacity">
-      <Card
-        className={`w-full ${isOwner ? "h-56" : "h-40"} flex flex-col ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
-      >
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="leading-snug">{room.name}</CardTitle>
-            {isOwner && (
-              <label
-                className="group flex items-center gap-2 text-sm text-muted-foreground shrink-0 cursor-pointer rounded-md px-2 py-1 transition-colors hover:text-foreground"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <input
-                  type="checkbox"
-                  checked={isOpen}
-                  disabled={isToggling || isDeleting}
-                  onChange={handleToggleOpen}
-                  onClick={(e) => e.stopPropagation()}
-                  className="h-4 w-4 rounded border border-input accent-primary cursor-pointer transition-all hover:brightness-125"
-                />
-                Open
-              </label>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-md text-muted-foreground line-clamp-2 md:line-clamp-3">
+    <article
+      className={`group relative flex min-h-48 flex-col rounded-md border bg-card transition-colors hover:border-primary/50 focus-within:border-primary/50 ${isDeleting ? "pointer-events-none opacity-50" : ""}`}
+    >
+      <div className="flex flex-1 flex-col p-5">
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span
+            className={`h-2 w-2 rounded-full ${isOpen ? "bg-margin" : "border border-muted-foreground"}`}
+          />
+          {isOpen ? "Taking questions" : "Closed"}
+          {!isOwner && <span className="ml-auto">You moderate</span>}
+        </p>
+        <h2 className="mt-3 text-lg font-semibold leading-snug tracking-tight">
+          <Link
+            href={`/room/${room.id}`}
+            className="outline-none after:absolute after:inset-0 after:rounded-md group-hover:text-primary"
+          >
+            {room.name}
+          </Link>
+        </h2>
+        {room.description && (
+          <p className="mt-1.5 line-clamp-2 leading-relaxed text-muted-foreground">
             {room.description}
           </p>
-        </CardContent>
-        {isOwner && (
-          <CardFooter className="gap-6 mt-auto">
-            <div
-              className="w-full"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <EditRoomDialog room={room} />
-            </div>
-            <Button
-              variant="destructive"
-              size="sm"
-              className="w-full"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              <TrashIcon /> Delete
-            </Button>
-          </CardFooter>
         )}
-      </Card>
-    </Link>
+      </div>
+      {isOwner && (
+        <div className="relative z-10 flex items-center gap-1 border-t px-3 py-2">
+          <label className="mr-auto flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm">
+            <Switch
+              checked={isOpen}
+              disabled={isToggling || isDeleting}
+              onCheckedChange={handleToggleOpen}
+            />
+            Open
+          </label>
+          <EditRoomDialog room={room} />
+          <Button
+            variant="quiet"
+            size="icon-sm"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            aria-label={`Delete ${room.name}`}
+          >
+            <TrashIcon />
+          </Button>
+        </div>
+      )}
+    </article>
   );
 }

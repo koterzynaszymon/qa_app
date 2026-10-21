@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PencilIcon, XIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { updateRoom } from "@/actions/rooms";
@@ -48,7 +48,7 @@ export default function EditRoomDialog({ room }: EditRoomDialogProps) {
       if (response.error) {
         setError(response.error);
       } else {
-        toast.success("Room updated successfully");
+        toast.success("Changes saved");
         setOpen(false);
       }
     } catch (error) {
@@ -70,46 +70,46 @@ export default function EditRoomDialog({ room }: EditRoomDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="ghost" size="sm">
           <PencilIcon className="w-4 h-4" /> Edit
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Edit Room</DialogTitle>
-          <DialogDescription>Update room details.</DialogDescription>
+          <DialogTitle>Edit room</DialogTitle>
+          <DialogDescription>Participants see these changes right away.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleEditRoom}>
           <div className="flex flex-col gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Room Name</Label>
+              <Label htmlFor={`name-${room.id}`}>Name</Label>
               <Input
-                id="name"
+                id={`name-${room.id}`}
                 name="name"
-                placeholder="My Room"
+                required
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor={`description-${room.id}`}>Description</Label>
               <Textarea
-                placeholder="Type your room description here."
+                id={`description-${room.id}`}
+                placeholder="Shown at the top of the room for participants."
                 value={roomDescription}
                 onChange={(e) => setRoomDescription(e.target.value)}
               />
             </div>
           </div>
-          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
-          <div className="flex justify-between gap-2 mt-4">
+          {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+          <div className="flex justify-end gap-2 mt-6">
             <DialogClose asChild>
-              <Button type="button" variant="outline">
-                <XIcon className="w-4 h-4" /> Cancel
+              <Button type="button" variant="ghost">
+                Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading} onClick={handleEditRoom}>
-              <PencilIcon className="w-4 h-4" />{" "}
-              {isLoading ? "Saving..." : "Save Changes"}
+            <Button type="submit" disabled={isLoading || !roomName.trim()}>
+              {isLoading ? "Saving…" : "Save changes"}
             </Button>
           </div>
         </form>

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PlusIcon, XIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { createRoom } from "@/actions/rooms";
@@ -37,7 +37,7 @@ export default function CreateRoomButton() {
       if (response.error) {
         setError(response.error);
       } else {
-        toast.success("Room created successfully");
+        toast.success("Room created");
         setOpen(false);
       }
     } catch (error) {
@@ -52,34 +52,34 @@ export default function CreateRoomButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <PlusIcon className="w-4 h-4" /> Create Room
+        <Button>
+          <PlusIcon className="w-4 h-4" /> New room
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Create Room</DialogTitle>
+          <DialogTitle>New room</DialogTitle>
           <DialogDescription>
-            Create a new Q&A room for your event.
+            One room per talk or meeting. You can rename it later.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleCreateRoom}>
           <div className="flex flex-col gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Room Name</Label>
-              <Input id="name" name="name" placeholder="My Room" value={roomName} onChange={(e) => setRoomName(e.target.value)} />
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" name="name" placeholder="Friday all-hands" required value={roomName} onChange={(e) => setRoomName(e.target.value)} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea placeholder="Type your room description here." value={roomDescription} onChange={(e) => setRoomDescription(e.target.value)} />
+              <Textarea id="description" placeholder="Shown at the top of the room for participants." value={roomDescription} onChange={(e) => setRoomDescription(e.target.value)} />
             </div>
           </div>
-          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
-          <div className="flex justify-between gap-2 mt-4">
+          {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+          <div className="flex justify-end gap-2 mt-6">
             <DialogClose asChild>
-              <Button type="button" variant="outline"><XIcon className="w-4 h-4" /> Cancel</Button>
+              <Button type="button" variant="ghost">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading}><PlusIcon className="w-4 h-4" /> {isLoading ? "Creating..." : "Create Room"}</Button>
+            <Button type="submit" disabled={isLoading || !roomName.trim()}>{isLoading ? "Creating room…" : "Create room"}</Button>
           </div>
         </form>
       </DialogContent>
