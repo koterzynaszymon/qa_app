@@ -46,9 +46,9 @@ export function UpdatePasswordForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+          <CardTitle className="text-2xl tracking-tight">Choose a new password</CardTitle>
           <CardDescription>
-            Please enter your new password below.
+            You&apos;ll use it the next time you log in.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -65,9 +65,9 @@ export function UpdatePasswordForm({
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save new password"}
+                {isLoading ? "Saving…" : "Save new password"}
               </Button>
             </div>
           </form>
