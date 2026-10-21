@@ -10,20 +10,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PlusIcon, XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { addModeratorToRoom } from "@/actions/roomModerators";
-import { checkIfOwner as checkIfOwnerAction } from "@/actions/users";
 
 export default function AddModeratorDialog({ roomId }: { roomId: string }) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
-  const [isOwner, setIsOwner] = useState(false);
 
   const handleCreateQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +34,7 @@ export default function AddModeratorDialog({ roomId }: { roomId: string }) {
       if (response.error) {
         setError(response.error);
       } else {
-        toast.success("Moderator added successfully");
+        toast.success("Moderator added");
         setOpen(false);
       }
     } catch (error) {
@@ -48,64 +46,48 @@ export default function AddModeratorDialog({ roomId }: { roomId: string }) {
   };
 
 
-  useEffect(() => {
-    const checkIfOwner = async () => {
-      const {data} = await checkIfOwnerAction(roomId);
-      if (data) {
-        setIsOwner(true);
-      } else {
-        setIsOwner(false);
-      }
-    };
-    checkIfOwner();
-  }, [roomId]);
-
 
   return (
-    <>
-    {isOwner ? (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
-          <PlusIcon className="w-4 h-4" /> Add Moderator
+        <Button variant="ghost" size="sm">
+          <PlusIcon className="w-4 h-4" /> Add moderator
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Add Moderator</DialogTitle>
+          <DialogTitle>Add moderator</DialogTitle>
           <DialogDescription>
-            Add a moderator to the room.
+            Moderators can answer and delete questions in this room. They need
+            a MeetAsk account.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleCreateQuestion}>
           <div className="flex flex-col gap-4">
             <div className="grid gap-2">
+              <Label htmlFor="moderator-email">Email</Label>
               <Input
-                id="email"
-                placeholder="Email of the moderator"
+                id="moderator-email"
+                type="email"
+                placeholder="name@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
-          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
-          <div className="flex justify-between gap-2 mt-4">
+          {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+          <div className="flex justify-end gap-2 mt-6">
             <DialogClose asChild>
-              <Button type="button" variant="outline">
-                <XIcon className="w-4 h-4" /> Cancel
+              <Button type="button" variant="ghost">
+                Cancel
               </Button>
             </DialogClose>
             <Button type="submit" disabled={isLoading || !email.trim()}>
-              <PlusIcon className="w-4 h-4" />{" "}
-              {isLoading ? "Adding..." : "Add Moderator"}
+              {isLoading ? "Adding…" : "Add moderator"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
-  ) : (
-    <p></p>
-  )}
-  </>
   );
 }

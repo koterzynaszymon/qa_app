@@ -3,45 +3,85 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { ShareIcon, XIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckIcon, CopyIcon, QrCodeIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { toast } from "sonner";
 
-export default function ShareThroughQrcodeDialog({ roomId }: { roomId: string }) {
+export default function ShareThroughQrcodeDialog({
+  roomId,
+  roomName,
+}: {
+  roomId: string;
+  roomName: string;
+}) {
   const [open, setOpen] = useState(false);
-  const roomUrl = `${process.env.NEXT_PUBLIC_APP_URL}/room/${roomId}`;
+  const [copied, setCopied] = useState(false);
+  const [roomUrl, setRoomUrl] = useState(
+    `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/room/${roomId}`,
+  );
+
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_APP_URL) {
+      setRoomUrl(`${window.location.origin}/room/${roomId}`);
+    }
+  }, [roomId]);
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(roomUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy. Select the link and copy it manually.");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <ShareIcon className="w-4 h-4" /> Share room
+        <Button variant="outline" className="w-full">
+          <QrCodeIcon /> Share room
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share room</DialogTitle>
+          <DialogTitle>Share {roomName}</DialogTitle>
           <DialogDescription>
-            Share the room with your participants.
+            Put the code on screen or send the link. Anyone with it can ask a
+            question.
           </DialogDescription>
         </DialogHeader>
         {open && (
-          <div className="flex justify-center items-center bg-white p-4 rounded-lg">
-            <QRCodeSVG value={roomUrl} size={256} level="H" />
+          <div className="mx-auto rounded-md bg-white p-5">
+            <QRCodeSVG
+              value={roomUrl}
+              size={248}
+              level="H"
+              fgColor="#141B3A"
+              className="h-auto w-full max-w-[248px]"
+            />
           </div>
         )}
-        <DialogClose asChild>
-          <Button type="button" variant="outline">
-            <XIcon className="w-4 h-4" /> Close
+        <div className="flex gap-2">
+          <input
+            readOnly
+            value={roomUrl}
+            aria-label="Room link"
+            onFocus={(e) => e.target.select()}
+            className="h-9 min-w-0 flex-1 rounded-md border bg-muted px-3 text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+          />
+          <Button onClick={copyLink} className="shrink-0">
+            {copied ? <CheckIcon /> : <CopyIcon />}
+            {copied ? "Copied" : "Copy link"}
           </Button>
-        </DialogClose>
+        </div>
       </DialogContent>
     </Dialog>
   );

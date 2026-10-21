@@ -1,30 +1,24 @@
-import { PageLoader } from "@/components/ui/page-loader";
-
 function SidebarSkeleton() {
   return (
-    <div className="w-full shrink-0 border-b p-4 md:w-64 md:min-h-full md:border-b-0 md:border-r">
-      <div className="flex flex-row gap-2 md:flex-col md:gap-4">
-        <div className="h-9 flex-1 animate-pulse rounded-md bg-muted md:flex-none" />
-        <div className="h-9 flex-1 animate-pulse rounded-md bg-muted md:flex-none" />
-        <div className="h-9 flex-1 animate-pulse rounded-md bg-muted md:flex-none" />
-      </div>
+    <div className="border-b bg-card px-4 py-6 sm:px-8 md:border-b-0 md:border-r md:px-6 md:py-10">
+      <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+      <div className="mt-4 h-8 w-48 animate-pulse rounded bg-muted" />
+      <div className="mt-3 h-4 w-full animate-pulse rounded bg-muted" />
+      <div className="mt-2 h-4 w-2/3 animate-pulse rounded bg-muted" />
+      <div className="mt-6 h-9 w-full animate-pulse rounded-md bg-muted" />
     </div>
   );
 }
 
 export function RoomPageSkeleton() {
   return (
-    <div className="flex w-full flex-1 flex-col md:flex-row">
+    <div className="grid w-full flex-1 md:grid-cols-[19rem_1fr]">
       <SidebarSkeleton />
-      <div className="min-w-0 flex-1 p-4">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="h-8 w-40 animate-pulse rounded bg-muted" />
-          <div className="flex gap-2">
-            <div className="h-9 w-32 animate-pulse rounded-md bg-muted" />
-            <div className="h-9 w-28 animate-pulse rounded-md bg-muted" />
-          </div>
+      <div className="min-w-0 px-4 pb-16 pt-6 sm:px-8 md:pt-10">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-10 h-[8.5rem] animate-pulse rounded-md border bg-card" />
+          <QuestionsListSkeleton />
         </div>
-        <PageLoader className="min-h-[200px] p-8" />
       </div>
     </div>
   );
@@ -32,13 +26,16 @@ export function RoomPageSkeleton() {
 
 export function QuestionsListSkeleton() {
   return (
-    <div className="flex flex-col gap-4">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <div
-          key={index}
-          className="h-24 animate-pulse rounded-lg border bg-muted/30"
-        />
-      ))}
+    <div>
+      <div className="mb-5 h-10 border-b" />
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className="qcard h-24 animate-pulse">
+            <div />
+            <div />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

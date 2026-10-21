@@ -16,7 +16,6 @@ import {
   getRoomModerators,
   removeModeratorFromRoom,
 } from "@/actions/roomModerators";
-import { checkIfOwner as checkIfOwnerAction } from "@/actions/users";
 
 interface Moderator {
   user_id: string;
@@ -25,7 +24,6 @@ interface Moderator {
 
 export default function ManageModeratorsDialog({ roomId }: { roomId: string }) {
   const [open, setOpen] = useState(false);
-  const [isOwner, setIsOwner] = useState(false);
   const [moderators, setModerators] = useState<Moderator[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -39,10 +37,6 @@ export default function ManageModeratorsDialog({ roomId }: { roomId: string }) {
       setModerators(data ?? []);
     }
     setIsLoading(false);
-  }, [roomId]);
-
-  useEffect(() => {
-    checkIfOwnerAction(roomId).then(({ data }) => setIsOwner(!!data));
   }, [roomId]);
 
   useEffect(() => {
@@ -63,44 +57,41 @@ export default function ManageModeratorsDialog({ roomId }: { roomId: string }) {
     setRemovingId(null);
   };
 
-  if (!isOwner) {
-    return null;
-  }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
-          <UsersIcon className="w-4 h-4" /> Manage Moderators
+        <Button variant="ghost" size="sm">
+          <UsersIcon className="w-4 h-4" /> Moderators
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Manage Moderators</DialogTitle>
+          <DialogTitle>Moderators</DialogTitle>
           <DialogDescription>
-            Remove moderators from this room.
+            People who can answer and delete questions in this room.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-muted-foreground">Loading…</p>
           ) : moderators.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No moderators yet.
+              No moderators yet. Add one by email to share the work.
             </p>
           ) : (
             moderators.map((moderator) => (
               <div
                 key={moderator.user_id}
-                className="flex items-center justify-between gap-2 rounded-md border p-2"
+                className="flex items-center justify-between gap-2 border-b py-2 last:border-b-0"
               >
                 <span className="text-sm truncate">{moderator.email}</span>
                 <Button
-                  variant="destructive"
-                  size="sm"
+                  variant="quiet"
+                  size="icon-sm"
                   className="shrink-0"
                   onClick={() => handleRemove(moderator.user_id)}
                   disabled={removingId === moderator.user_id}
+                  aria-label={`Remove ${moderator.email}`}
                 >
                   <TrashIcon className="w-4 h-4" />
                 </Button>

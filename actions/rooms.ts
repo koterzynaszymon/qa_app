@@ -182,3 +182,18 @@ export async function getRoomIsOpen(roomId: string) {
 
     return { data: data.is_open };
 }
+
+export async function getRoom(roomId: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from("rooms")
+        .select("id, name, description, is_open, owner_id")
+        .eq("id", roomId)
+        .single();
+
+    if (error) {
+        return { error: error.message };
+    }
+
+    return { data };
+}

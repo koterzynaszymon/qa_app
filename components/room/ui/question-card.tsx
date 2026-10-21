@@ -3,14 +3,14 @@
 import { createAnswer, deleteAnswer } from "@/actions/answers";
 import { deleteQuestion } from "@/actions/questions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface Question {
   id: string;
+  number: number;
   content: string;
   answer: string | null;
   is_answered: boolean;
@@ -33,7 +33,7 @@ export default function QuestionCard({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteQuestion = async () => {
-    if (!confirm("Are you sure you want to delete this question?")) {
+    if (!confirm(`Delete question ${question.number}?`)) {
       return;
     }
 
@@ -48,19 +48,30 @@ export default function QuestionCard({
   };
 
   return (
-    <Card
-      className={`w-full flex flex-col ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
+    <article
+      className={`qcard ${isDeleting ? "pointer-events-none opacity-50" : ""}`}
+      aria-label={`Question ${question.number}`}
     >
-      <CardContent className="pt-6">
-        <p className="text-md">{question.content}</p>
-      </CardContent>
-      <CardFooter className="mt-auto flex flex-col gap-2">
-        <QuestionCardMeta
-          createdAt={question.created_at}
-          canDelete={canDelete}
-          isDeleting={isDeleting}
-          onDelete={handleDeleteQuestion}
-        />
+      <div className="qcard-num">Q{question.number}</div>
+      <div className="qcard-body">
+        <div className="flex items-start gap-3">
+          <p className="min-w-0 flex-1 whitespace-pre-line text-[1.0625rem] font-medium leading-snug [overflow-wrap:anywhere]">
+            {question.content}
+          </p>
+          {canDelete && (
+            <Button
+              variant="quiet"
+              size="icon-sm"
+              className="-mr-2 -mt-1"
+              onClick={handleDeleteQuestion}
+              disabled={isDeleting}
+              aria-label={`Delete question ${question.number}`}
+            >
+              <TrashIcon />
+            </Button>
+          )}
+        </div>
+
         {question.is_answered && question.answer && (
           <QuestionAnswerDisplay
             answer={question.answer}
@@ -69,39 +80,18 @@ export default function QuestionCard({
             roomId={roomId}
           />
         )}
-        {canAnswer && <QuestionAnswerForm questionId={question.id} />}
-      </CardFooter>
-    </Card>
-  );
-}
 
-function QuestionCardMeta({
-  createdAt,
-  canDelete,
-  isDeleting,
-  onDelete,
-}: {
-  createdAt: string;
-  canDelete: boolean;
-  isDeleting: boolean;
-  onDelete: () => void;
-}) {
-  return (
-    <div className="flex justify-between items-center w-full">
-      <span className="text-sm text-muted-foreground">
-        {formatTimeAgo(new Date(createdAt))}
-      </span>
-      {canDelete && (
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={onDelete}
-          disabled={isDeleting}
-        >
-          <TrashIcon className="w-4 h-4" /> Delete
-        </Button>
-      )}
-    </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <time
+            dateTime={question.created_at}
+            className="text-xs text-muted-foreground"
+          >
+            {formatTimeAgo(new Date(question.created_at))}
+          </time>
+          {canAnswer && <QuestionAnswerForm questionId={question.id} />}
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -119,7 +109,7 @@ function QuestionAnswerDisplay({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteAnswer = async () => {
-    if (!confirm("Are you sure you want to delete this answer?")) {
+    if (!confirm("Remove this answer? The question will go back to unanswered.")) {
       return;
     }
 
@@ -129,26 +119,29 @@ function QuestionAnswerDisplay({
       toast.error(result.error);
       setIsDeleting(false);
     } else {
-      toast.success("Answer deleted");
+      toast.success("Answer removed");
     }
   };
 
   return (
-    <div className="w-full mt-2 rounded-md border bg-muted/50 p-3">
-      <div className="flex justify-between items-start gap-2">
-        <p className="text-sm font-medium text-muted-foreground">Answer</p>
+    <div className={`mt-3 border-l-2 border-primary pl-3 ${isDeleting ? "opacity-50" : ""}`}>
+      <div className="flex items-start gap-3">
+        <p className="min-w-0 flex-1 whitespace-pre-line leading-relaxed text-muted-foreground [overflow-wrap:anywhere]">
+          <span className="sr-only">Answer: </span>
+          {answer}
+        </p>
         {canDelete && (
           <Button
-            variant="destructive"
+            variant="quiet"
             size="sm"
+            className="-mr-2 -mt-1 h-7 px-2"
             onClick={handleDeleteAnswer}
             disabled={isDeleting}
           >
-            <TrashIcon className="w-4 h-4" /> Delete answer
+            Remove answer
           </Button>
         )}
       </div>
-      <p className="text-md mt-1">{answer}</p>
     </div>
   );
 }
@@ -158,9 +151,9 @@ function QuestionAnswerForm({ questionId }: { questionId: string }) {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!answer.trim()) {
-      toast.error("Answer cannot be empty");
       return;
     }
 
@@ -170,47 +163,54 @@ function QuestionAnswerForm({ questionId }: { questionId: string }) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("Answer submitted");
+        toast.success("Answer posted");
         setIsOpen(false);
         setAnswer("");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
+      toast.error(error instanceof Error ? error.message : "The answer wasn't posted. Try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <>
+  if (!isOpen) {
+    return (
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
-        className="w-full mt-2"
-        onClick={() => setIsOpen(!isOpen)}
+        className="-mr-2 text-primary hover:text-primary"
+        onClick={() => setIsOpen(true)}
       >
-        <Check className="w-4 h-4" /> {isOpen ? "Cancel" : "Answer question"}
+        Answer
       </Button>
-      {isOpen && (
-        <>
-          <Textarea
-            placeholder="Type your answer here..."
-            className="w-full mt-4"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-          />
-          <Button
-            variant="secondary"
-            size="sm"
-            className="mt-2 self-end"
-            onClick={handleSubmit}
-            disabled={isSubmitting || !answer.trim()}
-          >
-            <Check className="w-4 h-4" /> Submit Answer
-          </Button>
-        </>
-      )}
-    </>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-1 w-full">
+      <label htmlFor={`answer-${questionId}`} className="sr-only">
+        Your answer
+      </label>
+      <Textarea
+        id={`answer-${questionId}`}
+        autoFocus
+        placeholder="Write a short answer for everyone in the room."
+        value={answer}
+        onChange={(e) => setAnswer(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setIsOpen(false);
+        }}
+      />
+      <div className="mt-2 flex justify-end gap-2">
+        <Button type="button" variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
+          Cancel
+        </Button>
+        <Button type="submit" size="sm" disabled={isSubmitting || !answer.trim()}>
+          {isSubmitting ? "Posting…" : "Post answer"}
+        </Button>
+      </div>
+    </form>
   );
 }
 
